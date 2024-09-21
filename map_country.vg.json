@@ -3,12 +3,12 @@
   "width": 1000,
   "height": 500,
   "projection": {"type": "equalEarth"},
-  "title": "Global Temperature on May 16",
+  "title": "Global Temperature from May to September 2024",
   "layer": [
     {
       "data": {
-        "url": "map.json",  
-        "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}  
+        "url": "map.json",
+        "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
       },
       "mark": {
         "type": "geoshape",
@@ -17,10 +17,27 @@
       }
     },
     {
+      "data": {"graticule": true},
+      "mark": {
+        "type": "geoshape",
+        "stroke": "lightgrey",
+        "strokeWidth": 0.5
+      }
+    },
+    {
       "data": {
-        "url": "GlobalWeatherRepository.csv",  
+        "url": "GlobalWeatherRepository.csv",
         "format": {"type": "csv"}
       },
+      "transform": [
+        {
+          "calculate": "toNumber(substring(datum.last_updated, 5, 7))",  
+          "as": "month_extracted"
+        },
+        {
+          "filter": "datum.month_extracted == month_selection"  
+        }
+      ],
       "mark": "circle",
       "encoding": {
         "longitude": {"field": "longitude", "type": "quantitative"},
@@ -45,6 +62,18 @@
           {"field": "temperature_celsius", "type": "quantitative", "title": "Temperature (°C)"},
           {"field": "condition_text", "type": "nominal", "title": "Condition"}
         ]
+      }
+    }
+  ],
+  "params": [
+    {
+      "name": "month_selection",
+      "value": 5,  
+      "bind": {
+        "input": "select",
+        "options": [5, 6, 7, 8, 9],  
+        "labels": ["May", "Jun", "Jul", "Aug", "Sep"],
+        "name": "Select Month: "
       }
     }
   ]
